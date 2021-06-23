@@ -5,14 +5,13 @@ To run the bokeh plot, cd into the `bokeh_code` directory and run: `bokeh serve 
 
 
 To-do list:
-- Age slider
-- Description of column headers
-- Luminosity class in plain english ("white dwarf", etc)
-- Create stand-alone plot of spectrum of stellar atmosphere from MIST in bokeh
-- Integrate spectrum plot into bokeh server
-- Create stand-alone plot of internal structures (concentric circles) in bokeh
-- Integrate interior into bokeh server
-- Add synthetic photometry and colours
+- Age slider [HO]
+- Plain English description of column headers from MIST [TBD]
+- Luminosity class in plain english ("white dwarf", etc) [PP]
+- Create stand-alone plot of spectrum of stellar atmosphere from MIST in bokeh [AV]
+- Integrate spectrum plot into bokeh server [HP]
+- Create stand-alone plot of stellar internal structures (concentric circles) in bokeh [PP]
+- Integrate interior into bokeh server [HP]
+- Add synthetic photometry and colours in MIST [AV]
+- Convert luminosity to bolometric absolute magnitude (as data column header) [TBD]
 - 
-
- 
