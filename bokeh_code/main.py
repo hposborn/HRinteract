@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from bokeh.layouts import column, row
-from bokeh.models import Select, Slider
+from bokeh.models import Select, CustomJS, Slider
 from bokeh.palettes import Spectral5
 from bokeh.plotting import curdoc, figure
 
@@ -23,7 +23,8 @@ continuous = [x for x in columns if x not in discrete]
 
 def create_figure():
 
-    ageranges=(df['log10_isochrone_age_yr']>age.value-0.25)*(df['log10_isochrone_age_yr']<age.value+0.25)
+    ageranges = df.index
+    #(df['log10_isochrone_age_yr']>age.value-0.25)*(df['log10_isochrone_age_yr']<age.value+0.25)
 
     xs = np.random.normal(df.loc[ageranges,x.value].values,0.01*np.median(abs(np.diff(df.loc[ageranges,x.value].values))))
     ys = np.random.normal(df.loc[ageranges,y.value].values,0.01*np.median(abs(np.diff(df.loc[ageranges,x.value].values))))
