@@ -1,4 +1,4 @@
 # HRinteract
 Interactive plot from Code/Astro project
 
-retest
+To run the bokeh plot, cd into the `bokeh_code` directory and run: `bokeh serve --show main.py'
