@@ -78,8 +78,15 @@ def create_figure1(view):
     else:
         groups = pd.Categorical(all_source.data[color.value])
     all_source.data['color'] = [Spectral11[::-1][xx] for xx in groups.codes]
-
+    
     plot1.circle(x=x.value, y=y.value, color='color', size='size', source=all_source, view=view)
+
+    if (y.value=='log_L' and x.value=='log_Teff'):
+        q = np.array([4.5, 5.3, 4, 3.7, 3.8])
+        r = np.array([-1, 6, 1, 3, 6 ])
+        n = np.array(['White\ndwarfs', 'Planetary\nNebulae', 'Main\nSequence', 'Red\nGiants', 'Asymptotic\ngiant branch'])
+        plot1.text(q, r, text=n,text_baseline="middle", text_align="center", color='black',text_font_size='8pt')
+
     if x.value=='log_Teff' or x.value=='log_G':
         plot1.x_range.flipped = True
         #=(xs.min(), xs.max())
