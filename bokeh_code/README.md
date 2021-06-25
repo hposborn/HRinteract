@@ -8,19 +8,15 @@ another.
 
 ## Setting Up
 
-This demo requires the [Pandas](https://pandas.pydata.org) package in order to
-run. To install Pandas using conda, execute the command:
+Following packages needed
 
     conda install pandas
-
-To install using pip, execute the command:
-
     pip install pandas
+    pip install bokeh 
+    pip install numpy 
 
 ## Running
 
-To view the app directly from a Bokeh server, navigate to the parent directory
-[`examples/app`](https://github.com/bokeh/bokeh/tree/master/examples/app),
-and execute the command:
+Go to HRinteract/bokeh_code and execute the command:
 
-    bokeh serve --show crossfilter
+    bokeh serve --show multiplots.py
