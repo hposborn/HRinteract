@@ -6,6 +6,7 @@ from bokeh.plotting import figure
 from bokeh.layouts import column, row
 from bokeh.io import curdoc
 from random import sample
+import math
 
 import astropy.io.ascii as ascii
 #df=ascii.read("../Data/MIST_iso_60d24e849c2d1.iso").to_pandas()
@@ -104,17 +105,45 @@ def create_figure1(view):
 def create_figure2(view):
     # Plot graph two with data single point (TBD)
     single_source_ix = np.random.randint(len(all_source.data['log_L']))
-    plot2 = figure(plot_height=260, plot_width=300, title="place_holder_1_for_structure", 
-                tools="crosshair,box_zoom,reset,save,wheel_zoom,hover")    
-    plot2.circle(x=all_source.data['log_L'][single_source_ix], y=all_source.data['log10_isochrone_age_yr'][single_source_ix])
+    h1_sur=all_source.data['surface_h1'][single_source_ix]
+    he3_sur=all_source.data['surface_he3'][single_source_ix]
+    he4_sur=all_source.data['surface_he4'][single_source_ix]
+    c12_sur=all_source.data['surface_c12'][single_source_ix]
+    o16_sur=all_source.data['surface_o16'][single_source_ix]
+    total_sur=h1_sur+he3_sur+he4_sur+c12_sur+o16_sur
+    
+    plot2 = figure(plot_height=500, plot_width=600, title="Relative compositions: Red H; Blue He III; Green He IV; Yellow C XII, Magenta O VI", 
+                tools=" ")    
+    
+
+    plot2.wedge(x=0, y=0, radius=1, start_angle=0, end_angle=math.radians((h1_sur/total_sur) * 360),color='red')
+    plot2.wedge(x=0, y=0, radius=1, start_angle=math.radians((h1_sur/total_sur) * 360), end_angle=math.radians((he3_sur/total_sur) * 360),color='blue')
+    plot2.wedge(x=0, y=0, radius=1, start_angle=math.radians((he3_sur/total_sur) * 360), end_angle=math.radians((he4_sur/total_sur) * 360),color='green')
+    plot2.wedge(x=0, y=0, radius=1, start_angle=math.radians((he4_sur/total_sur) * 360), end_angle=math.radians((c12_sur/total_sur) * 360),color='yellow')
+    plot2.wedge(x=0, y=0, radius=1, start_angle=math.radians((c12_sur/total_sur) * 360), end_angle=math.radians((o16_sur/total_sur) * 360),color='magenta')
+    
+    #plot2.wedge(x=0, y=0, radius=1, start_angle=(math.radians(c12_sur/total_sur)*360), end_angle=(math.radians(he3_sur/total_sur)*360), color='green', legend_label="He 3")
+    #plot2.wedge(x=0, y=0, radius=1, start_angle=he3_sur/total_sur, end_angle=he4_sur/total_sur, color='blue')
+    #plot2.wedge(x=0, y=0, radius=1, start_angle=he4_sur/total_sur, end_angle=c12_sur/total_sur, color='magenta')
+    #plot2.wedge(x=0, y=0, radius=1, start_angle=c12_sur/total_sur, end_angle=o16_sur/total_sur, color='yellow')
+    #plot2.wedge(x=0, y=0, radius=1, start_angle=o16_sur, end_angle=0, color='white')
+    #plot2.annular_wedge(all_source.data['log_L'][single_source_ix], y=all_source.data['log10_isochrone_age_yr'][single_source_ix], inner_radius =o16_sur, outer_radius = s_sur**0.5, start_angle = 0, end_angle = 6.5, line_color = "red", fill_color ="green")
+    
     return plot2
 
 def create_figure3(view):
     # Plot graph three with data single point (TBD)
     single_source_ix = np.random.randint(len(all_source.data['log_L']))
-    plot2 = figure(plot_height=260, plot_width=300, title="place_holder_2_for_structure", 
+    s_sur=all_source.data['star_mass'][single_source_ix]
+    h1_sur=all_source.data['surface_h1'][single_source_ix]
+    he3_sur=all_source.data['surface_he3'][single_source_ix]
+    he4_sur=all_source.data['surface_he4'][single_source_ix]
+    c12_sur=all_source.data['surface_c12'][single_source_ix]
+    o16_sur=all_source.data['surface_o16'][single_source_ix]
+    plot2 = figure(plot_height=260, plot_width=300, title="Inner radius of He, Outer radius of star", 
                 tools="crosshair,box_zoom,reset,save,wheel_zoom,hover")    
-    plot2.circle(x=all_source.data['log_L'][single_source_ix], y=all_source.data['log10_isochrone_age_yr'][single_source_ix])
+    plot2.annular_wedge(all_source.data['log_L'][single_source_ix], y=all_source.data['log10_isochrone_age_yr'][single_source_ix], inner_radius =he4_sur, outer_radius = c12_sur, start_angle = 0, end_angle = 6.5, line_color = "red", fill_color ="white")
+    plot2.annular_wedge(all_source.data['log_L'][single_source_ix], y=all_source.data['log10_isochrone_age_yr'][single_source_ix], inner_radius =c12_sur, outer_radius = o16_sur, start_angle = 0, end_angle = 6.5, line_color = "red", fill_color ="green")
     return plot2
 
 def updateplot1(attr, old, new):
@@ -126,12 +155,13 @@ def updateplots(attr, old, new):
     #Updating all plots
     view = update_source_filter()
     extras.children[0] = create_figure2(view)
-    extras.children[1] = create_figure3(view)
+    #extras.children[1] = create_figure3(view)
     layout.children[1] = create_figure1(view)
 
 #Laying out the figures and controls:
 controls = column(x, y, color, size, slider_age, width=200)
-extras = column(create_figure2(view), create_figure3(view))
+#extras = column(create_figure2(view), create_figure3(view))
+extras = column(create_figure2(view))
 layout = row(controls, create_figure1(view), extras)
 
 # Determinining what is done on each interactive action:
