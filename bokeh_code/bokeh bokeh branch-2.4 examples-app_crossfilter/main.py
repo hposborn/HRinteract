@@ -1,33 +1,30 @@
 import pandas as pd
-import numpy as np
+
 from bokeh.layouts import column, row
-from bokeh.models import Select, CustomJS, Slider
+from bokeh.models import Select
 from bokeh.palettes import Spectral5
 from bokeh.plotting import curdoc, figure
+from bokeh.sampledata.autompg import autompg_clean as df
 
-import astropy.io.ascii as ascii
-df=ascii.read("Data/MIST_iso_60d24e849c2d1.iso").to_pandas()
-
-nselect = 3000
-select_ix=np.random.choice(len(df), nselect, replace=False)
-df=df.loc[select_ix,[col for col in df.columns if 'cent' not in col and 'surf' not in col]]
+df = df.copy()
 
 SIZES = list(range(6, 22, 3))
 COLORS = Spectral5
 N_SIZES = len(SIZES)
 N_COLORS = len(COLORS)
 
+# data cleanup
+df.cyl = df.cyl.astype(str)
+df.yr = df.yr.astype(str)
+del df['name']
+
 columns = sorted(df.columns)
 discrete = [x for x in columns if df[x].dtype == object]
 continuous = [x for x in columns if x not in discrete]
 
 def create_figure():
-
-    ageranges = df.index
-    #(df['log10_isochrone_age_yr']>age.value-0.25)*(df['log10_isochrone_age_yr']<age.value+0.25)
-
-    xs = np.random.normal(df.loc[ageranges,x.value].values,0.01*np.median(abs(np.diff(df.loc[ageranges,x.value].values))))
-    ys = np.random.normal(df.loc[ageranges,y.value].values,0.01*np.median(abs(np.diff(df.loc[ageranges,x.value].values))))
+    xs = df[x.value].values
+    ys = df[y.value].values
     x_title = x.value.title()
     y_title = y.value.title()
 
@@ -39,7 +36,6 @@ def create_figure():
     kw['title'] = "%s vs %s" % (x_title, y_title)
 
     p = figure(height=600, width=800, tools='pan,box_zoom,hover,reset', **kw)
-    
     p.xaxis.axis_label = x_title
     p.yaxis.axis_label = y_title
 
@@ -60,15 +56,9 @@ def create_figure():
             groups = pd.qcut(df[color.value].values, N_COLORS, duplicates='drop')
         else:
             groups = pd.Categorical(df[color.value])
-        c = [COLORS[::-1][xx] for xx in groups.codes]
+        c = [COLORS[xx] for xx in groups.codes]
 
     p.circle(x=xs, y=ys, color=c, size=sz, line_color="white", alpha=0.6, hover_color='white', hover_alpha=0.5)
-
-    if x.value=='log_Teff':
-        p.x_range.flipped = True
-        #=(xs.min(), xs.max())
-    
-
 
     return p
 
@@ -77,25 +67,20 @@ def update(attr, old, new):
     layout.children[1] = create_figure()
 
 
-x = Select(title='X-Axis', value='log_Teff', options=columns)
+x = Select(title='X-Axis', value='mpg', options=columns)
 x.on_change('value', update)
 
-y = Select(title='Y-Axis', value='log_L', options=columns)
+y = Select(title='Y-Axis', value='hp', options=columns)
 y.on_change('value', update)
 
-size = Select(title='Size', value='log_R', options=['None'] + continuous)
+size = Select(title='Size', value='None', options=['None'] + continuous)
 size.on_change('value', update)
 
-color = Select(title='Color', value='log_Teff', options=['None'] + continuous)
+color = Select(title='Color', value='None', options=['None'] + continuous)
 color.on_change('value', update)
-
-slider = Slider(start=5, end=10.5, value=4.5, step=0.1, title="Age")
-slider.js_on_change("age", CustomJS(code="""
-    console.log('slider: age=' + this.age, this.toString())
-"""))
 
 controls = column(x, y, color, size, width=200)
 layout = row(controls, create_figure())
 
 curdoc().add_root(layout)
-curdoc().title = "HR Diagram"
+curdoc().title = "Crossfilter"
