@@ -1,10 +1,6 @@
-# Crossfilter Example
+Interactive plot for HR diagram
 
-Create a Bokeh application that shows how different facets of data in a
-[Pandas](https://pandas.pydata.org) DataFrame can be plotted against one
-another.
 
-<img src="https://static.bokeh.org/crossfilter.png" width="80%"></img>
 
 ## Setting Up
 
